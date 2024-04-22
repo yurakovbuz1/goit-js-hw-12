@@ -1,7 +1,7 @@
 // зберігай функції для HTTP-запитів.
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
-import { renderGallery, renderLoadBtn } from "./render-functions";
+import { renderGallery, renderLoadBtn, renderGalleryMore } from "./render-functions";
 import axios from 'axios';
 
 const MY_KEY = "43507759-1cdf1229fe6b1935ead7e315b";
@@ -10,16 +10,19 @@ const loading = `<span class="loader"></span>`;
 let page = 1;
 const per_page = 15;
 let totalPages;
+let searchTerm;
 
-async function getFirstImages(searchTerm, gallery, loadContainer) {
+async function getFirstImages(q, gallery, loadContainer) {
+    loadContainer.innerHTML = "";
     page = 1;
+    searchTerm = q;
 
     gallery.innerHTML = loading;
     try {
         const { data } = await axios('https://pixabay.com/api/', {
             params: {
                 key: MY_KEY,
-                q: searchTerm,
+                q,
                 image_type: "photo",
                 orientation: "horizontal",
                 safesearch: true,
@@ -41,8 +44,32 @@ async function getFirstImages(searchTerm, gallery, loadContainer) {
     }
 }
 
-// function getNextImages() {
+async function getNextImages(gallery, loadContainer) {
+    page += 1;
+    loadContainer.innerHTML = loading;
+    const rect = gallery.children[0].getBoundingClientRect();
+    try {
+        const {data} = await axios('https://pixabay.com/api/', {
+            params: {
+                key: MY_KEY,
+                q: searchTerm,
+                image_type: "photo",
+                orientation: "horizontal",
+                safesearch: true,
+                per_page,
+                page
+            }
+        });
+        console.log(rect.height)
+        renderGalleryMore(data.hits, gallery);
+        renderLoadBtn(totalPages, loadContainer, page);
+        window.scrollBy({
+            top: (rect.height * 2),
+            behavior: "smooth"
+        });
+    } catch (error) {
+        iziToast.error({ message: error.message })
+    }
+}
 
-// }
-
-export { getFirstImages };
+export { getFirstImages, getNextImages };
