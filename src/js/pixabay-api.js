@@ -1,36 +1,48 @@
 // зберігай функції для HTTP-запитів.
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
-import { renderGallery } from "./render-functions";
+import { renderGallery, renderLoadBtn } from "./render-functions";
+import axios from 'axios';
 
 const MY_KEY = "43507759-1cdf1229fe6b1935ead7e315b";
+const loading = `<span class="loader"></span>`;
 
-function getImages(searchTerm, gallery) {
-    const options = new URLSearchParams({
-        key: MY_KEY,
-        q: searchTerm,
-        image_type: "photo",
-        orientation: "horizontal",
-        safesearch: true
-    });
+let page = 1;
+const per_page = 15;
+let totalPages;
 
-    gallery.innerHTML = `<span class="loader"></span>`
-    fetch(`https://pixabay.com/api/?${options}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(response.status);
+async function getFirstImages(searchTerm, gallery, loadContainer) {
+    page = 1;
+
+    gallery.innerHTML = loading;
+    try {
+        const { data } = await axios('https://pixabay.com/api/', {
+            params: {
+                key: MY_KEY,
+                q: searchTerm,
+                image_type: "photo",
+                orientation: "horizontal",
+                safesearch: true,
+                per_page,
+                page
             }
-            return response.json();
-        })
-        .then(response => {
-            if (response.hits.length === 0) {
-                gallery.innerHTML = "";
-                iziToast.error({ message: "Sorry, there are no images matching your search query. Please try again!" })
-            } else {
-                renderGallery(response.hits, gallery);
-            }
-        })
-        .catch(error => console.log("ERROR", error));
+        });
+        totalPages = Math.ceil(data.totalHits / per_page);
+        
+        if (data.hits.length === 0) {
+            gallery.innerHTML = "";
+            iziToast.error({ message: "Sorry, there are no images matching your search query. Please try again!" })
+        } else {
+            renderGallery(data.hits, gallery);
+            renderLoadBtn(totalPages, loadContainer);
+        }
+    } catch (error) {
+        iziToast.error({ message: error.message })
+    }
 }
 
-export { getImages };
+// function getNextImages() {
+
+// }
+
+export { getFirstImages };

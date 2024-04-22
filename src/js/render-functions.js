@@ -7,6 +7,7 @@ var lightbox = new SimpleLightbox('.gallery a', {
         captionDelay: 250
     });
 
+const per_page = 15;
 
 function renderGallery(hits, gallery) {
     gallery.innerHTML = hits.map((pic) => `
@@ -38,4 +39,13 @@ function renderGallery(hits, gallery) {
     lightbox.refresh();
 };
 
-export { renderGallery };
+function renderLoadBtn(totalPages, loadContainer) {
+  if (totalPages > 1) {
+    loadContainer.innerHTML = `<button class="load-button">Load more</button>`;
+  } else {
+    console.log("HERE");
+    loadContainer.innerHTML = "";
+  }
+}
+
+export { renderGallery,  renderLoadBtn};
