@@ -39,11 +39,13 @@ function renderGallery(hits, gallery) {
     lightbox.refresh();
 };
 
-function renderLoadBtn(totalPages, loadContainer) {
-  if (totalPages > 1) {
+function renderLoadBtn(totalPages, loadContainer, currentPage) {
+  console.log(totalPages, currentPage);
+  if (totalPages === currentPage) {
+    loadContainer.innerHTML = "";
+  } else if (totalPages > 1) {
     loadContainer.innerHTML = `<button class="load-button">Load more</button>`;
   } else {
-    console.log("HERE");
     loadContainer.innerHTML = "";
   }
 }

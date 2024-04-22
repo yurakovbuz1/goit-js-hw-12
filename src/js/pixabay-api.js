@@ -34,7 +34,7 @@ async function getFirstImages(searchTerm, gallery, loadContainer) {
             iziToast.error({ message: "Sorry, there are no images matching your search query. Please try again!" })
         } else {
             renderGallery(data.hits, gallery);
-            renderLoadBtn(totalPages, loadContainer);
+            renderLoadBtn(totalPages, loadContainer, page);
         }
     } catch (error) {
         iziToast.error({ message: error.message })
