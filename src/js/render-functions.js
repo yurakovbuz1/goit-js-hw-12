@@ -68,7 +68,7 @@ function renderGalleryMore(hits, gallery) {
     ).join("");
   gallery.insertAdjacentHTML("beforeend", markup); 
 
-    lightbox.refresh();
+  lightbox.refresh();
 };
 
 function renderLoadBtn(totalPages, loadContainer, currentPage) {

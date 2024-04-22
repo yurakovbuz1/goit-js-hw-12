@@ -60,7 +60,6 @@ async function getNextImages(gallery, loadContainer) {
                 page
             }
         });
-        console.log(rect.height)
         renderGalleryMore(data.hits, gallery);
         renderLoadBtn(totalPages, loadContainer, page);
         window.scrollBy({
